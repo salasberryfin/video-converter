@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: video-converter
+    stage: test
+
+spec:
+  selector:
+    matchLabels:
+      app: converter-db
+  replicas: 1
+  template:
+    metadata:
+      name: video-converter
+      labels:
+        app: converter-db
+    spec:
+      containers:
+        - name: postgres-db
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: PASSWORD

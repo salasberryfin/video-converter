@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apiserver
+  labels:
+    app: video-converter
+    stage: test
+
+spec:
+  selector:
+    matchLabels:
+      app: converter
+  replicas: 1
+  template:
+    metadata:
+      name: video-converter
+      labels:
+        app: converter
+    spec:
+      containers:
+        - name: apiserver
+          image: salasberryfin/video-converter:test
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+      restartPolicy: Always
