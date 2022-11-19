@@ -10,6 +10,9 @@ RUN pip install -r requirements.txt
 
 COPY src/. .
 
+ENV FLASK_RUN_PORT=5000
+ENV FLASK_DEBUG=True
+
 EXPOSE 5000
 
 CMD ["python", "api.py"]

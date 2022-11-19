@@ -1,8 +1,7 @@
-from typing import Tuple
 
 
-def form_response(msg: str, code: int, data: str = None,
-                  err: str = None) -> Tuple:
+def form_response(msg: str, code: int = 200, data: str = None,
+                  err: str = None):
     """
     Generic JSON response generator for given params
     """
