@@ -1,3 +1,7 @@
+"""
+Models contains a User class that defines an existing user that is stored
+into the SQLite database and allows for user creation and validation.
+"""
 from werkzeug.security import (
         generate_password_hash,
         check_password_hash,

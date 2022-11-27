@@ -1,5 +1,5 @@
+import logging
 from flask import (
-        Flask,
         request,
         render_template,
     )
@@ -13,6 +13,9 @@ from flaskapplication.security import (
         )
 
 
+logger = logging.getLogger("flask_application")
+
+
 @app.before_first_request
 def init_db():
     """
@@ -24,7 +27,15 @@ def init_db():
 
 @app.route("/")
 def home():
+    logger.debug("Home requested")
     return render_template("home.html")
+
+
+@app.route("/admin")
+@login_required
+def admin():
+    logger.debug("Admin only resource")
+    return "Admin user"
 
 
 @app.route("/health", methods=["GET"])
@@ -39,7 +50,36 @@ def login():
     """
     Login as registered user
     """
-    return "Login path"
+    try:
+        username = request.form.get("username")
+        password = request.form.get("password")
+        assert username is not None
+        assert password is not None
+    except AssertionError as err:
+        return common.form_response(
+                "Your request is missing data: check username and password",
+                400,
+                None,
+                str(err),
+                )
+
+    user_from_db = User.query.filter_by(username=username).first()
+
+    if not user_from_db.check_password(password):
+        message = f"Failed to login as {user_from_db.username}"
+        status_code = 403
+        error = "Incorrect username or password"
+    else:
+        message = f"Successfully logged in as {user_from_db.username}"
+        status_code = 200
+        error = None
+
+    return common.form_response(
+            message,
+            status_code,
+            None,
+            error,
+            )
 
 
 @app.route("/users/list", methods=["POST"])
